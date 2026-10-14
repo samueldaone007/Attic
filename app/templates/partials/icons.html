@@ -1,0 +1,5 @@
+{#- Icon macro. Paths live once in partials/sprite.html; this just points at
+    the right symbol. .icon CSS gives it the stroke color and width. -#}
+{% macro icon(name, size=18) -%}
+<svg class="icon" width="{{ size }}" height="{{ size }}" aria-hidden="true" focusable="false"><use href="#i-{{ name }}"></use></svg>
+{%- endmacro %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="description" content="Attic - a private place for notes, links and snippets. Keep it. Find it.">
+  <meta name="theme-color" content="#0F172A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Attic">
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/static/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <script>
+    // Set the theme before the page paints so there is no flash of the wrong
+    // colors. "system" follows the device setting.
+    (function () {
+      try {
+        var stored = localStorage.getItem('attic-theme') || 'system';
+        var resolved = stored === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+          : stored;
+        document.documentElement.setAttribute('data-theme', resolved);
+      } catch (e) { /* keep the default */ }
+    })();
+  </script>
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+{% include "partials/sprite.html" %}
+{% block body %}{% endblock %}
+{% include "partials/shortcuts_dialog.html" %}
+<script src="/static/js/ui.js" defer></script>
+<script src="/static/js/app.js" defer></script>
+{% block scripts %}{% endblock %}
+<script>
+  // Offline support (service worker). Only on http(s); skip if unsupported.
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function () {
+        /* offline support is a bonus, not a requirement */
+      });
+    });
+  }
+</script>
+</body>
+</html>

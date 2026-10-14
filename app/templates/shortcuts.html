@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% import "partials/icons.html" as ui %}
+{% block title %}{{ app_name }} · Keyboard shortcuts{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app">
+  {% include "partials/sidebar.html" %}
+  <div class="main">
+    {% include "partials/topbar.html" %}
+    <main class="content" id="content" tabindex="-1">
+
+      <section class="card settings-card">
+        <h1 class="card-title">{{ ui.icon('help', 18) }} Keyboard shortcuts</h1>
+        <p class="setting-help">Move through your attic without the mouse. Shortcuts work anywhere except while you're typing in a field.</p>
+
+        <ul class="shortcuts-list">
+          <li><span class="shortcut-name">Show this guide</span><span class="shortcut-keys"><kbd>?</kbd></span></li>
+          <li><span class="shortcut-name">Search</span><span class="shortcut-keys"><kbd>/</kbd></span></li>
+          <li><span class="shortcut-name">Create a new item</span><span class="shortcut-keys"><kbd>N</kbd></span></li>
+          <li><span class="shortcut-name">Move through the list</span><span class="shortcut-keys"><kbd>↑</kbd><kbd>↓</kbd></span></li>
+          <li><span class="shortcut-name">Jump to first / last item</span><span class="shortcut-keys"><kbd>Home</kbd><kbd>End</kbd></span></li>
+          <li><span class="shortcut-name">Open the selected item</span><span class="shortcut-keys"><kbd>Enter</kbd></span></li>
+          <li><span class="shortcut-name">Close dialogs / clear selection</span><span class="shortcut-keys"><kbd>Esc</kbd></span></li>
+          <li><span class="shortcut-name">Save the capture box</span><span class="shortcut-keys"><kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Enter</kbd></span></li>
+        </ul>
+      </section>
+
+      <section class="card settings-card">
+        <h2 class="card-title">{{ ui.icon('download', 18) }} Install Attic as an app</h2>
+        <p class="setting-help">
+          Attic is a small web app you can install on your phone or computer. Once installed it
+          opens its own window, keeps working offline, and adds shortcuts straight from the app
+          icon: New note, New link, New snippet and Search. Look for "Install app" or the
+          add-to-home-screen option in your browser's menu.
+        </p>
+        <div class="modal-actions">
+          <span class="spacer"></span>
+          <a class="btn btn-ghost" href="/">Back to Attic</a>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+{% endblock %}

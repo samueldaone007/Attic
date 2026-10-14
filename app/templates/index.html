@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% import "partials/logo.html" as brand %}
+{% import "partials/icons.html" as ui %}
+{% block title %}{{ app_name }} · Keep it. Find it.{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app">
+  {% include "partials/sidebar.html" %}
+  <div class="main">
+    {% include "partials/topbar.html" %}
+    <main class="content" id="content" tabindex="-1">
+
+      <div class="list-toolbar" id="listToolbar" hidden>
+        <span class="result-count" id="resultCount" role="status" aria-live="polite"></span>
+        <label class="sort-wrap" id="sortWrap">
+          <span class="visually-hidden">Sort by</span>
+          <select id="sortSelect" aria-label="Sort items">
+            <option value="newest">Newest first</option>
+            <option value="edited">Recently edited</option>
+            <option value="title">Title A–Z</option>
+          </select>
+        </label>
+      </div>
+
+      <ul class="item-list" id="itemList" aria-label="Items"></ul>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <span class="empty-logo">{{ brand.logo(56) }}</span>
+        <h2 class="empty-title">Your attic is empty. Add your first note.</h2>
+        <p class="empty-text">Keep notes, links and snippets in one calm place, then find them by typing a few letters.</p>
+        <button class="btn btn-primary" id="emptyCreateBtn" type="button">
+          {{ ui.icon('plus', 18) }} Create your first note
+        </button>
+      </div>
+
+      <div class="empty-state" id="searchEmpty" hidden>
+        <span class="empty-logo">{{ brand.logo(56) }}</span>
+        <h2 class="empty-title" id="searchEmptyTitle">Nothing in the attic matches that.</h2>
+        <p class="empty-text" id="searchEmptyText">Try fewer letters, or clear the filters.</p>
+        <button class="btn btn-ghost" id="clearFiltersBtn" type="button">
+          <span id="searchEmptyActionLabel">Clear filters</span>
+        </button>
+      </div>
+
+      <p id="searchStatus" class="visually-hidden" role="status" aria-live="polite"></p>
+    </main>
+  </div>
+</div>
+{% include "partials/mobilenav.html" %}
+
+{#- Capture box: new and edit share this one dialog. -#}
+<dialog id="captureDialog" class="modal" aria-labelledby="captureTitle">
+  <form id="captureForm" class="modal-card" novalidate>
+    <div class="modal-head">
+      <div class="type-tabs" role="tablist" aria-label="Item type">
+        <button type="button" class="type-tab is-active" data-type="note" role="tab" aria-selected="true">
+          {{ ui.icon('note', 16) }}<span>Note</span>
+        </button>
+        <button type="button" class="type-tab" data-type="link" role="tab" aria-selected="false">
+          {{ ui.icon('link', 16) }}<span>Link</span>
+        </button>
+        <button type="button" class="type-tab" data-type="snippet" role="tab" aria-selected="false">
+          {{ ui.icon('snippet', 16) }}<span>Snippet</span>
+        </button>
+      </div>
+      <button type="button" class="icon-btn" data-dialog-close aria-label="Close" title="Close (Esc)">
+        {{ ui.icon('close', 24) }}
+      </button>
+    </div>
+
+    <input type="hidden" id="captureId" value="">
+
+    <div class="capture-fields">
+      <div class="field" id="linkUrlRow" hidden>
+        <label class="field-label" for="captureUrl">URL</label>
+        <input id="captureUrl" type="url" placeholder="https://…" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="captureTitle">Title <span class="field-optional">optional</span></label>
+        <input id="captureTitle" type="text" maxlength="300" placeholder="Title" autocomplete="off">
+      </div>
+
+      <div class="field" id="snippetLangRow" hidden>
+        <label class="field-label" for="captureLanguage">Language</label>
+        <input id="captureLanguage" type="text" list="langList" placeholder="e.g. python" autocomplete="off" spellcheck="false">
+        <datalist id="langList">
+          <option value="python"><option value="javascript"><option value="typescript">
+          <option value="bash"><option value="json"><option value="sql">
+          <option value="html"><option value="css"><option value="c">
+          <option value="cpp"><option value="java"><option value="go">
+          <option value="rust"><option value="yaml"><option value="dockerfile">
+        </datalist>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label class="field-label" for="captureBody">Body</label>
+          <button type="button" class="link-btn" id="previewToggle">
+            {{ ui.icon('eye', 16) }}<span id="previewToggleLabel">Preview</span>
+          </button>
+        </div>
+        <textarea id="captureBody" rows="8" placeholder="Write in Markdown… (Ctrl/Cmd + Enter to save)"></textarea>
+        <div class="markdown-body" id="capturePreview" hidden></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="captureTags">Tags</label>
+        <input id="captureTags" type="text" placeholder="separate with commas" autocomplete="off" spellcheck="false">
+        <div class="tag-suggest" id="tagSuggest" hidden></div>
+      </div>
+
+      <p class="secret-hint">{{ ui.icon('lock', 14) }} Don't store passwords or API keys here.</p>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost btn-danger-ghost" id="captureDelete" hidden>
+        {{ ui.icon('trash', 16) }} Delete
+      </button>
+      <span class="spacer"></span>
+      <button type="button" class="btn btn-ghost" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn-primary" id="captureSave">{{ ui.icon('check', 16) }} Save</button>
+    </div>
+  </form>
+</dialog>
+
+{#- Full item view. -#}
+<dialog id="itemDialog" class="modal" aria-label="Item">
+  <article class="modal-card item-detail" id="itemDetail"></article>
+</dialog>
+
+<div data-launch-new="{{ launch_new }}" data-launch-search="{{ '1' if launch_search else '' }}" data-default-type="{{ default_item_type }}" hidden id="launchFlags"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/api.js" defer></script>
+<script src="/static/js/items.js" defer></script>
+{% endblock %}

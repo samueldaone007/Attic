@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% import "partials/logo.html" as brand %}
+{% import "partials/icons.html" as ui %}
+{% block title %}Log in · {{ app_name }}{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block body %}
+<main class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="auth-logo">{{ brand.logo(40) }}</span>
+      <h1 class="auth-title">{{ app_name }}</h1>
+      <p class="auth-tagline">{{ tagline }}</p>
+    </div>
+
+    {% if error %}
+    <p class="alert alert-error" role="alert">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/login" class="auth-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label class="field">
+        <span class="field-label">Username</span>
+        <input name="username" type="text" value="{{ username }}" autocomplete="username" required autofocus>
+      </label>
+      <label class="field">
+        <span class="field-label">Password</span>
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn-primary btn-block" type="submit">Log in</button>
+    </form>
+
+    <p class="auth-note">{{ ui.icon('lock', 14) }} Private attic · no public sign-up</p>
+  </div>
+</main>
+{% endblock %}

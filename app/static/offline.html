@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F172A">
+  <title>Attic - offline</title>
+  <style>
+    :root {
+      --bg: #0F172A;
+      --surface: #1E293B;
+      --border: #334155;
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+      --primary: #14B8A6;
+      --on-primary: #04201D;
+      --radius: 12px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+    .card {
+      max-width: 400px;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+    }
+    .mark {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: var(--primary);
+      color: var(--on-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p { color: var(--muted); font-size: 14px; margin: 0 0 20px; line-height: 1.5; }
+    .actions { display: flex; gap: 8px; justify-content: center; }
+    a, button {
+      font: inherit;
+      text-decoration: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+    a.primary, button.primary { background: var(--primary); border-color: var(--primary); color: var(--on-primary); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark">A</div>
+    <h1>You're offline</h1>
+    <p>Attic saved a copy of the app so it still loads, but there is no connection right now. Reconnect and try again.</p>
+    <div class="actions">
+      <button class="primary" type="button" onclick="location.reload()">Retry</button>
+      <a href="/">Back to Attic</a>
+    </div>
+  </div>
+</body>
+</html>

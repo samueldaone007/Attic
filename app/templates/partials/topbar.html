@@ -1,0 +1,36 @@
+{% import "partials/icons.html" as ui %}
+{% import "partials/logo.html" as brand %}
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menuBtn" type="button"
+          aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+    {{ ui.icon('menu', 22) }}
+  </button>
+
+  <a class="topbar-brand" href="/" aria-label="{{ app_name }} home">
+    {{ brand.logo(24) }}<span>{{ app_name }}</span>
+  </a>
+
+  <form class="search" id="searchForm" role="search" action="/" method="get">
+    <span class="search-icon">{{ ui.icon('search', 18) }}</span>
+    <input id="searchInput" name="q" type="search" placeholder="Search your attic…"
+           autocomplete="off" spellcheck="false" aria-label="Search items"
+           aria-describedby="searchStatus">
+  </form>
+
+  <div class="topbar-actions">
+    <button class="btn btn-primary new-item-btn" id="newItemDesktopBtn" type="button"
+            data-action="new-item" title="New item (N)">
+      {{ ui.icon('plus', 18) }}<span>New</span>
+    </button>
+    <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">
+      <span class="theme-icon theme-icon-dark">{{ ui.icon('moon', 20) }}</span>
+      <span class="theme-icon theme-icon-light">{{ ui.icon('sun', 20) }}</span>
+    </button>
+    <button class="icon-btn" type="button" data-action="shortcuts" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+      {{ ui.icon('help', 20) }}
+    </button>
+    <a class="icon-btn" href="/settings" aria-label="Settings" title="Settings">
+      {{ ui.icon('settings', 20) }}
+    </a>
+  </div>
+</header>

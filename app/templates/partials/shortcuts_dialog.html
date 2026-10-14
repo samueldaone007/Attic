@@ -1,0 +1,26 @@
+{% import "partials/icons.html" as ui %}
+<dialog id="shortcutsDialog" class="modal modal-sm" aria-labelledby="shortcutsDialogTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 class="modal-title" id="shortcutsDialogTitle">Keyboard shortcuts</h2>
+      <button type="button" class="icon-btn" data-shortcuts-close aria-label="Close" title="Close (Esc)">
+        {{ ui.icon('close', 22) }}
+      </button>
+    </div>
+    <ul class="shortcuts-list">
+      <li><span class="shortcut-name">Show this guide</span><span class="shortcut-keys"><kbd>?</kbd></span></li>
+      <li><span class="shortcut-name">Search</span><span class="shortcut-keys"><kbd>/</kbd></span></li>
+      <li><span class="shortcut-name">Create a new item</span><span class="shortcut-keys"><kbd>N</kbd></span></li>
+      <li><span class="shortcut-name">Move through the list</span><span class="shortcut-keys"><kbd>↑</kbd><kbd>↓</kbd></span></li>
+      <li><span class="shortcut-name">Jump to first / last item</span><span class="shortcut-keys"><kbd>Home</kbd><kbd>End</kbd></span></li>
+      <li><span class="shortcut-name">Open the selected item</span><span class="shortcut-keys"><kbd>Enter</kbd></span></li>
+      <li><span class="shortcut-name">Close dialogs / clear selection</span><span class="shortcut-keys"><kbd>Esc</kbd></span></li>
+      <li><span class="shortcut-name">Save the capture box</span><span class="shortcut-keys"><kbd>Ctrl</kbd><span class="kbd-plus">+</span><kbd>Enter</kbd></span></li>
+    </ul>
+    <div class="modal-actions">
+      <span class="spacer"></span>
+      <a class="btn btn-ghost" href="/shortcuts">Full guide</a>
+      <button type="button" class="btn btn-ghost" data-shortcuts-close>Close</button>
+    </div>
+  </div>
+</dialog>

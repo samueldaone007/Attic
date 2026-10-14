@@ -1,0 +1,19 @@
+{% import "partials/icons.html" as ui %}
+{% set current = active_view|default('all') %}
+<nav class="mobile-nav" aria-label="Primary">
+  <a class="mobile-link {{ 'is-active' if current == 'all' }}" href="/">
+    {{ ui.icon('all', 22) }}<span>All</span>
+  </a>
+  <button class="mobile-link" type="button" data-action="focus-search">
+    {{ ui.icon('search', 22) }}<span>Search</span>
+  </button>
+  <a class="mobile-link" href="/?view=tags">
+    {{ ui.icon('tag', 22) }}<span>Tags</span>
+  </a>
+  <a class="mobile-link {{ 'is-active' if current == 'settings' }}" href="/settings">
+    {{ ui.icon('settings', 22) }}<span>Settings</span>
+  </a>
+</nav>
+<button class="fab" type="button" data-action="new-item" aria-label="New item" title="New item (N)">
+  {{ ui.icon('plus', 26) }}
+</button>

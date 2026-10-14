@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Attic runtime data (database, secret key, exports) - never commit these
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Environment
+.env
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

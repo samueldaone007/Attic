@@ -1,0 +1,55 @@
+{% import "partials/icons.html" as ui %}
+{% import "partials/logo.html" as brand %}
+{#- active_view is optional; defaults to "all" -#}
+{% set current = active_view|default('all') %}
+<aside class="sidebar" id="sidebar" aria-label="Navigation">
+  <div class="sidebar-head">
+    <a class="brand" href="/">
+      <span class="brand-mark">{{ brand.logo(28) }}</span>
+      <span class="brand-name">{{ app_name }}</span>
+    </a>
+    <p class="brand-tag">{{ tagline }}</p>
+  </div>
+
+  <nav class="side-nav">
+    <a class="side-link {{ 'is-active' if current == 'all' }}" href="/" data-view="all">
+      {{ ui.icon('all') }}<span>All items</span>
+    </a>
+    <a class="side-link {{ 'is-active' if current == 'note' }}" href="/?type=note" data-view="note">
+      {{ ui.icon('note') }}<span>Notes</span>
+    </a>
+    <a class="side-link {{ 'is-active' if current == 'link' }}" href="/?type=link" data-view="link">
+      {{ ui.icon('link') }}<span>Links</span>
+    </a>
+    <a class="side-link {{ 'is-active' if current == 'snippet' }}" href="/?type=snippet" data-view="snippet">
+      {{ ui.icon('snippet') }}<span>Snippets</span>
+    </a>
+    <a class="side-link {{ 'is-active' if current == 'pinned' }}" href="/?pinned=1" data-view="pinned">
+      {{ ui.icon('pin') }}<span>Pinned</span>
+    </a>
+    <a class="side-link {{ 'is-active' if current == 'archive' }}" href="/?archived=1" data-view="archive">
+      {{ ui.icon('archive') }}<span>Archive</span>
+    </a>
+    <a class="side-link {{ 'is-active' if current == 'trash' }}" href="/?trash=1" data-view="trash">
+      {{ ui.icon('trash') }}<span>Trash</span>
+    </a>
+  </nav>
+
+  <div class="side-section">
+    <div class="side-section-title">{{ ui.icon('tag', 14) }} Tags</div>
+    <ul class="tag-list" id="tagList">
+      <li class="side-muted" id="tagListEmpty">No tags yet</li>
+    </ul>
+  </div>
+
+  <div class="sidebar-foot">
+    <div class="user-chip">{{ ui.icon('lock', 14) }}<span>{{ user['username'] }}</span></div>
+    <form action="/logout" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button class="side-link as-button" type="submit">
+        {{ ui.icon('logout') }}<span>Log out</span>
+      </button>
+    </form>
+  </div>
+</aside>
+<div class="nav-backdrop" id="navBackdrop" hidden></div>

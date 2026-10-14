@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% import "partials/logo.html" as brand %}
+{% import "partials/icons.html" as ui %}
+{% block title %}Settings · {{ app_name }}{% endblock %}
+{% block body_class %}app-page{% endblock %}
+
+{% block body %}
+<div class="app">
+  {% set active_view = 'settings' %}
+  {% include "partials/sidebar.html" %}
+  <div class="main">
+    {% include "partials/topbar.html" %}
+    <main class="content" id="content" tabindex="-1">
+      <div class="page-head">
+        <h1 class="page-title">Settings</h1>
+        <p class="page-sub">Preferences for your private attic.</p>
+      </div>
+
+      <section class="card settings-card">
+        <h2 class="card-title">{{ ui.icon('sun', 18) }} Appearance</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Theme</span>
+            <span class="setting-help">Follow the device setting, or pick one. Your choice is remembered.</span>
+          </div>
+          <label class="select-wrap">
+            <span class="visually-hidden">Theme</span>
+            <select id="themeSelect">
+              <option value="system" {{ 'selected' if theme == 'system' }}>System</option>
+              <option value="dark" {{ 'selected' if theme == 'dark' }}>Dark</option>
+              <option value="light" {{ 'selected' if theme == 'light' }}>Light</option>
+            </select>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Default item type</span>
+            <span class="setting-help">Which type the capture box starts on when you press New.</span>
+          </div>
+          <span class="pill">{{ default_item_type|capitalize }}</span>
+        </div>
+      </section>
+
+      <section class="card settings-card">
+        <h2 class="card-title">{{ ui.icon('lock', 18) }} Account</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">{{ user['username'] }}</span>
+            <span class="setting-help">Member since {{ user['created_at'] }}. Session lasts about {{ session_hours }} hours ({{ (session_hours // 24) }} days).</span>
+          </div>
+          <form action="/logout" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="btn btn-ghost" type="submit">{{ ui.icon('logout', 16) }} Log out</button>
+          </form>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Change password</span>
+            <span class="setting-help">Update the password you use to log in.</span>
+          </div>
+          <button type="button" class="btn btn-ghost" id="passwordToggle">Change</button>
+        </div>
+        <div class="password-box" id="passwordBox" hidden>
+          <div class="field">
+            <label class="field-label" for="passwordCurrent">Current password</label>
+            <input id="passwordCurrent" type="password" autocomplete="current-password">
+          </div>
+          <div class="field">
+            <label class="field-label" for="passwordNew">New password</label>
+            <input id="passwordNew" type="password" autocomplete="new-password" minlength="8">
+            <span class="field-hint">At least 8 characters.</span>
+          </div>
+          <div class="field">
+            <label class="field-label" for="passwordNew2">Repeat new password</label>
+            <input id="passwordNew2" type="password" autocomplete="new-password">
+          </div>
+          <p class="field-hint" id="passwordStatus" role="status"></p>
+          <div>
+            <button type="button" class="btn btn-primary" id="passwordSave">Save password</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card settings-card">
+        <h2 class="card-title">{{ ui.icon('help', 18) }} Keyboard shortcuts</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Browse with your keyboard</span>
+            <span class="setting-help">Search, create and move through items — no mouse needed. Press <kbd>?</kbd> anywhere to see them.</span>
+          </div>
+          <div class="setting-controls">
+            <button type="button" class="btn btn-ghost" data-action="shortcuts">{{ ui.icon('help', 16) }} View shortcuts</button>
+            <a class="btn btn-ghost" href="/shortcuts">Full guide</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="card settings-card">
+        <h2 class="card-title">{{ ui.icon('trash', 18) }} Trash</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Keep deleted items for</span>
+            <span class="setting-help">After this many days the trash is emptied automatically at the next server start.</span>
+          </div>
+          <div class="setting-controls">
+            <label class="select-wrap">
+              <span class="visually-hidden">Trash retention</span>
+              <select id="trashDaysSelect" aria-label="Trash retention">
+                <option value="7" {{ 'selected' if trash_days == 7 }}>7 days</option>
+                <option value="14" {{ 'selected' if trash_days == 14 }}>14 days</option>
+                <option value="30" {{ 'selected' if trash_days == 30 }}>30 days</option>
+                <option value="60" {{ 'selected' if trash_days == 60 }}>60 days</option>
+                <option value="90" {{ 'selected' if trash_days == 90 }}>90 days</option>
+              </select>
+            </label>
+            <button type="button" class="btn btn-ghost" id="trashDaysSave">Save</button>
+          </div>
+        </div>
+        <p class="setting-help" id="trashDaysStatus" role="status"></p>
+      </section>
+
+      <section class="card settings-card">
+        <h2 class="card-title">{{ ui.icon('archive', 18) }} Backup</h2>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Export everything</span>
+            <span class="setting-help">Download all notes, links, snippets and tags as one JSON file. Safe to keep anywhere.</span>
+          </div>
+          <a class="btn btn-ghost" href="/api/export">{{ ui.icon('download', 16) }} Export</a>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-name">Import a backup</span>
+            <span class="setting-help">Load a JSON backup. Items that already match are skipped; the rest are added as new.</span>
+          </div>
+          <form class="import-form" id="importForm" novalidate>
+            <label class="btn btn-ghost file-btn">
+              {{ ui.icon('upload', 16) }}<span id="importFileName">Choose file</span>
+              <input type="file" id="importFile" accept="application/json,.json" hidden>
+            </label>
+            <button type="submit" class="btn btn-primary" id="importSubmit" disabled>{{ ui.icon('check', 16) }} Import</button>
+          </form>
+        </div>
+        <p class="setting-help" id="importStatus" role="status"></p>
+      </section>
+
+      <p class="settings-foot">Your data lives in a single SQLite file you fully own.</p>
+    </main>
+  </div>
+</div>
+{% include "partials/mobilenav.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    "use strict";
+    var form = document.getElementById("importForm");
+    if (!form) return;
+    var fileInput = document.getElementById("importFile");
+    var fileName = document.getElementById("importFileName");
+    var submitBtn = document.getElementById("importSubmit");
+    var status = document.getElementById("importStatus");
+
+    var trashSave = document.getElementById("trashDaysSave");
+    if (trashSave) {
+      var trashSelect = document.getElementById("trashDaysSelect");
+      trashSave.addEventListener("click", function () {
+        var token = document.querySelector('meta[name="csrf-token"]');
+        trashSave.disabled = true;
+        fetch("/api/settings", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-CSRF-Token": token ? token.getAttribute("content") : "",
+          },
+          body: JSON.stringify({ trash_days: parseInt(trashSelect.value, 10) }),
+        })
+          .then(function (res) {
+            return res.json().then(function (d) { return { ok: res.ok, d: d }; });
+          })
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.d && r.d.detail ? r.d.detail : "Couldn't save that.");
+            if (window.Attic && Attic.ui) Attic.ui.toast("Trash retention saved.");
+          })
+          .catch(function (err) {
+            if (window.Attic && Attic.ui) Attic.ui.toast(err.message);
+          })
+          .finally(function () { trashSave.disabled = false; });
+      });
+    }
+
+    var passwordToggle = document.getElementById("passwordToggle");
+    if (passwordToggle) {
+      var passwordBox = document.getElementById("passwordBox");
+      var passwordStatus = document.getElementById("passwordStatus");
+      var passwordSave = document.getElementById("passwordSave");
+      passwordToggle.addEventListener("click", function () {
+        var open = passwordBox.hidden;
+        passwordBox.hidden = !open;
+        passwordToggle.textContent = open ? "Cancel" : "Change";
+        if (open) document.getElementById("passwordCurrent").focus();
+      });
+      passwordSave.addEventListener("click", function () {
+        var current = document.getElementById("passwordCurrent");
+        var newer = document.getElementById("passwordNew");
+        var again = document.getElementById("passwordNew2");
+        passwordStatus.textContent = "";
+        if (newer.value.length < 8) {
+          passwordStatus.textContent = "New password must be at least 8 characters.";
+          newer.focus();
+          return;
+        }
+        if (newer.value !== again.value) {
+          passwordStatus.textContent = "The two new passwords don't match.";
+          again.focus();
+          return;
+        }
+        var token = document.querySelector('meta[name="csrf-token"]');
+        passwordSave.disabled = true;
+        passwordSave.textContent = "Saving…";
+        fetch("/api/account/password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-CSRF-Token": token ? token.getAttribute("content") : "",
+          },
+          body: JSON.stringify({ current: current.value, new: newer.value }),
+        })
+          .then(function (res) {
+            return res.json().then(function (d) { return { ok: res.ok, d: d }; });
+          })
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.d && r.d.detail ? String(r.d.detail) : "Couldn't change the password.");
+            if (window.Attic && Attic.ui) Attic.ui.toast("Password updated.");
+            current.value = ""; newer.value = ""; again.value = "";
+            passwordBox.hidden = true;
+            passwordToggle.textContent = "Change";
+          })
+          .catch(function (err) {
+            if (window.Attic && Attic.ui) Attic.ui.toast(err.message);
+          })
+          .finally(function () {
+            passwordSave.disabled = false;
+            passwordSave.textContent = "Save password";
+          });
+      });
+    }
+
+    var exportLink = document.querySelector('a[href="/api/export"]');
+    if (exportLink) {
+      exportLink.addEventListener("click", function () {
+        if (window.Attic && Attic.ui) Attic.ui.toast("Preparing your backup…");
+      });
+    }
+
+    function hasFile() { return !!fileInput.files && fileInput.files.length > 0; }
+
+    fileInput.addEventListener("change", function () {
+      fileName.textContent = hasFile() ? fileInput.files[0].name : "Choose file";
+      submitBtn.disabled = !hasFile();
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!hasFile()) return;
+      var token = document.querySelector('meta[name="csrf-token"]');
+      var data = new FormData();
+      data.append("file", fileInput.files[0]);
+
+      status.textContent = "Importing…";
+      submitBtn.disabled = true;
+      if (window.Attic && Attic.ui) Attic.ui.toast("Importing backup…");
+      fetch("/api/import", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "X-CSRF-Token": token ? token.getAttribute("content") : "",
+        },
+        body: data,
+      })
+        .then(function (res) {
+          return res.json().then(function (d) { return { ok: res.ok, d: d }; });
+        })
+        .then(function (r) {
+          if (!r.ok) throw new Error(r.d && r.d.detail ? r.d.detail : "Import failed.");
+          var n = r.d.imported || 0;
+          var s = r.d.skipped || 0;
+          var message = "Imported " + n + " item" + (n === 1 ? "" : "s") +
+            "; skipped " + s + ".";
+          status.textContent = message;
+          if (window.Attic && Attic.ui) Attic.ui.toast(n > 0 ? "Import successful." : "Import done — nothing new to add.");
+        })
+        .catch(function (err) {
+          status.textContent = err.message;
+          if (window.Attic && Attic.ui) Attic.ui.toast(err.message);
+        })
+        .finally(function () { submitBtn.disabled = !hasFile(); });
+    });
+  })();
+</script>
+{% endblock %}
